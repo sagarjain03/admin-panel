@@ -6,9 +6,9 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Student Admin Dashboard",
+  title: "Admin Dashboard",
   description: "A clean admin dashboard for managing student records",
-    generator: 'v0.dev'
+    generator: 'MAIT'
 }
 
 export default function RootLayout({
@@ -18,6 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   )
