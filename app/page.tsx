@@ -56,20 +56,16 @@ export default function Dashboard() {
   if (loading) return <div>Loading...</div>
 
   return (
-    <>
-      <head>
-        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-      </head>
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-semibold text-blue-700">Student Dashboard</h1>
-          <Link href="/create">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Create
-            </Button>
-          </Link>
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-semibold text-blue-700">Student Dashboard</h1>
+        <Link href="/create">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Create
+          </Button>
+        </Link>
+      </div>
 
       {students.length === 0 ? (
         <div>No data present</div>
