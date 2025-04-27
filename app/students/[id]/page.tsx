@@ -1,66 +1,44 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, Github, Linkedin, Twitter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-
-// Sample data - in a real app, this would come from an API or database
-const students = [
-  {
-    id: "1",
-    name: "Alex Johnson",
-    enrollmentNumber: "EN2023001",
-    department: "Computer Science",
-    batch: "2023",
-    contactNumber: "+1 (555) 123-4567",
-    category: "Regular",
-    description: "Passionate about AI and machine learning.",
-    profileImage: "/placeholder.svg?height=300&width=300",
-    socialMedia: {
-      linkedin: "https://linkedin.com/in/alexjohnson",
-      twitter: "https://twitter.com/alexjohnson",
-      github: "https://github.com/alexjohnson",
-    },
-  },
-  {
-    id: "2",
-    name: "Sarah Williams",
-    enrollmentNumber: "EN2023002",
-    department: "Electrical Engineering",
-    batch: "2023",
-    contactNumber: "+1 (555) 234-5678",
-    category: "Regular",
-    description: "Interested in renewable energy systems.",
-    profileImage: "/placeholder.svg?height=300&width=300",
-    socialMedia: {
-      linkedin: "https://linkedin.com/in/sarahwilliams",
-      twitter: "https://twitter.com/sarahwilliams",
-      github: "https://github.com/sarahwilliams",
-    },
-  },
-  {
-    id: "3",
-    name: "Michael Chen",
-    enrollmentNumber: "EN2023003",
-    department: "Mechanical Engineering",
-    batch: "2023",
-    contactNumber: "+1 (555) 345-6789",
-    category: "Exchange",
-    description: "Focused on robotics and automation.",
-    profileImage: "/placeholder.svg?height=300&width=300",
-    socialMedia: {
-      linkedin: "https://linkedin.com/in/michaelchen",
-      twitter: "https://twitter.com/michaelchen",
-      github: "https://github.com/michaelchen",
-    },
-  },
-]
+import axios from "axios"
 
 export default function StudentDetail({ params }: { params: { id: string } }) {
-  // Find the student with the matching ID
-  const student = students.find((s) => s.id === params.id)
+  const [student, setStudent] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
-  // If no student is found, show a message
+  useEffect(() => {
+    async function fetchStudent() {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/posts/${params.id}`)
+        if (response.data.success) {
+          setStudent(response.data.data)
+        } else {
+          setStudent(null)
+        }
+      } catch (error) {
+        console.error("Error fetching student", error)
+        setStudent(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchStudent()
+  }, [params.id])
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-screen">
+        <p className="text-blue-700">Loading...</p>
+      </div>
+    )
+  }
+
   if (!student) {
     return (
       <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-screen">
@@ -97,23 +75,19 @@ export default function StudentDetail({ params }: { params: { id: string } }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h2 className="text-xl font-semibold text-blue-700 mb-4">Student Information</h2>
-
               <div className="space-y-3">
                 <div>
                   <p className="text-sm text-blue-500">Department</p>
                   <p className="text-lg text-blue-800">{student.department}</p>
                 </div>
-
                 <div>
                   <p className="text-sm text-blue-500">Batch</p>
                   <p className="text-lg text-blue-800">{student.batch}</p>
                 </div>
-
                 <div>
                   <p className="text-sm text-blue-500">Category</p>
                   <p className="text-lg text-blue-800">{student.category}</p>
                 </div>
-
                 <div>
                   <p className="text-sm text-blue-500">Contact Number</p>
                   <p className="text-lg text-blue-800">{student.contactNumber}</p>
@@ -127,7 +101,7 @@ export default function StudentDetail({ params }: { params: { id: string } }) {
 
               <h2 className="text-xl font-semibold text-blue-700 mt-6 mb-4">Social Media</h2>
               <div className="flex space-x-4">
-                {student.socialMedia.linkedin && (
+                {student.socialMedia?.linkedin && (
                   <a
                     href={student.socialMedia.linkedin}
                     target="_blank"
@@ -138,8 +112,7 @@ export default function StudentDetail({ params }: { params: { id: string } }) {
                     LinkedIn
                   </a>
                 )}
-
-                {student.socialMedia.twitter && (
+                {student.socialMedia?.twitter && (
                   <a
                     href={student.socialMedia.twitter}
                     target="_blank"
@@ -150,8 +123,7 @@ export default function StudentDetail({ params }: { params: { id: string } }) {
                     Twitter
                   </a>
                 )}
-
-                {student.socialMedia.github && (
+                {student.socialMedia?.github && (
                   <a
                     href={student.socialMedia.github}
                     target="_blank"

@@ -1,4 +1,8 @@
+'use client'
+import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import axios from "axios"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
@@ -17,6 +21,43 @@ const departments = [
 ]
 
 export default function CreateStudent() {
+  const [department, setDepartment] = useState("")
+  const router = useRouter()
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    const formData = new FormData(e.currentTarget)
+    const data = {
+      name: formData.get("name"),
+      enrollmentNo: formData.get("enrollmentNumber"),
+      department: department,
+      batch: formData.get("batch"),
+      description: formData.get("description"),
+      studentPhoto: formData.get("profileImage"),
+      contactNumber: formData.get("contactNumber"),
+      category: formData.get("category"),
+      socialMedia: {
+        linkedin: formData.get("linkedin"),
+        twitter: formData.get("twitter"),
+        github: formData.get("github"),
+      },
+    }
+
+    try {
+      const response = await axios.post("http://localhost:3000/api/posts", data)
+      if (response.data.success) {
+        // redirect to dashboard after successful creation
+        router.push("/")
+      } else {
+        alert(response.data.message || "Failed to create post.")
+      }
+    } catch (error: any) {
+      console.error("Error creating post:", error)
+      alert(error.response?.data?.message || "An error occurred. Please try again.")
+    }
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Link href="/" className="inline-block mb-6">
@@ -31,7 +72,7 @@ export default function CreateStudent() {
           <CardTitle className="text-2xl text-blue-700">Create New Student</CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-blue-700">
@@ -56,7 +97,7 @@ export default function CreateStudent() {
                 <Label htmlFor="department" className="text-blue-700">
                   Department
                 </Label>
-                <Select>
+                <Select onValueChange={(value) => setDepartment(value)}>
                   <SelectTrigger className="border-blue-200 focus:border-blue-400">
                     <SelectValue placeholder="Select department" />
                   </SelectTrigger>
@@ -143,20 +184,23 @@ export default function CreateStudent() {
                 placeholder="URL or upload image"
                 defaultValue="/placeholder.svg?height=200&width=200"
               />
-              <p className="text-xs text-blue-500">Note: In a production app, this would be a file upload component</p>
+              <p className="text-xs text-blue-500">
+                Note: In a production app, this would be a file upload component
+              </p>
             </div>
+
+            <CardFooter className="flex justify-end space-x-2 p-0">
+              <Link href="/">
+                <Button variant="outline" className="text-blue-600 border-blue-300 hover:bg-blue-100">
+                  Cancel
+                </Button>
+              </Link>
+              <Button type="submit" className="bg-blue-700 hover:bg-blue-800 text-white">
+                Create
+              </Button>
+            </CardFooter>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-end space-x-2">
-          <Link href="/">
-            <Button variant="outline" className="text-blue-600 border-blue-300 hover:bg-blue-100">
-              Cancel
-            </Button>
-          </Link>
-          <Link href="/">
-            <Button className="bg-blue-700 hover:bg-blue-800 text-white">Create</Button>
-          </Link>
-        </CardFooter>
       </Card>
     </div>
   )
