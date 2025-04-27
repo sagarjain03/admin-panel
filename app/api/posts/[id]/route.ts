@@ -78,4 +78,38 @@ import { NextResponse } from "next/server";
       );
     }
   }
+
+
+  export async function DELETE(
+    request: Request,
+    { params }: { params: { id: string } }
+  ) {
+    try {
+      const { id } = params;
+      
+      await connectDB();
+      
+      const deletedPost = await Post.findByIdAndDelete(id);
+      
+      if (!deletedPost) {
+        return NextResponse.json(
+          { success: false, message: 'Post not found' },
+          { status: 404 }
+        );
+      }
+      
+      return NextResponse.json(
+        { success: true, message: 'Post deleted successfully' },
+        { status: 200 }
+      );
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      return NextResponse.json(
+        { success: false, message: 'Failed to delete post' },
+        { status: 500 }
+      );
+    }
+  }
+  
+
   
