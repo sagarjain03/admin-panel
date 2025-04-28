@@ -22,37 +22,67 @@ const departments = [
 
 export default function CreateStudent() {
   const [department, setDepartment] = useState("")
+  const [image, setImage] = useState<File | null>(null)
   const router = useRouter()
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) setImage(e.target.files[0])
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    const formData = new FormData(e.currentTarget)
-    const data = {
-      name: formData.get("name"),
-      enrollmentNo: formData.get("enrollmentNumber"),
-      department: department,
-      batch: formData.get("batch"),
-      description: formData.get("description"),
-      studentPhoto: formData.get("profileImage"),
-      contactNumber: formData.get("contactNumber"),
-      category: formData.get("category"),
-      socialMedia: {
-        linkedin: formData.get("linkedin"),
-        twitter: formData.get("twitter"),
-        github: formData.get("github"),
-      },
+    if (!image) {
+      alert("Please upload a profile image.")
+      return
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/api/posts", data)
-      if (response.data.success) {
-        // redirect to dashboard after successful creation
-        router.push("/")
-      } else {
-        alert(response.data.message || "Failed to create post.")
+      
+
+      const formData = new FormData();
+      formData.append('image', image);
+      formData.append('name', e.currentTarget.name.value);
+      formData.append('enrollmentNo', e.currentTarget.enrollmentNumber.value);
+      formData.append('department', department);
+      formData.append('batch', e.currentTarget.batch.value);
+      formData.append('description', e.currentTarget.description.value);
+      formData.append('contactNumber', e.currentTarget.contactNumber.value);
+      formData.append('category', e.currentTarget.category.value);
+      formData.append('linkedin', e.currentTarget.linkedin.value);
+      formData.append('twitter', e.currentTarget.twitter.value);
+      formData.append('github', e.currentTarget.github.value);
+  
+      try {
+        const uploadResponse = await axios.post('/api/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+
+        const imageUrl = uploadResponse.data.url;
+
+        const studentData = {
+          ...Object.fromEntries(formData),
+          studentPhoto: imageUrl,
+        };
+
+        try {
+          const response = await axios.post("http://localhost:3000/api/posts", studentData)
+          if (response.data.success) {
+            router.push("/")
+          } else {
+            alert(response.data.message || "Failed to create post.")
+          }
+        } catch (error: any) {
+          console.error("Error creating post:", error)
+          alert(error.response?.data?.message || "An error occurred. Please try again.")
+        }
       }
-    } catch (error: any) {
+      catch (error: any) {
+        console.error("Error creating post:", error)
+        alert(error.response?.data?.message || "An error occurred. Please try again.")
+      }
+    }
+    catch (error: any) {
       console.error("Error creating post:", error)
       alert(error.response?.data?.message || "An error occurred. Please try again.")
     }
@@ -174,19 +204,8 @@ export default function CreateStudent() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="profileImage" className="text-blue-700">
-                Profile Image URL
-              </Label>
-              <Input
-                id="profileImage"
-                name="profileImage"
-                className="border-blue-200 focus:border-blue-400"
-                placeholder="URL or upload image"
-                defaultValue="/placeholder.svg?height=200&width=200"
-              />
-              <p className="text-xs text-blue-500">
-                Note: In a production app, this would be a file upload component
-              </p>
+              <Label htmlFor="image" className="text-blue-700">Profile Image</Label>
+              <Input type="file" id="image" name="image" onChange={handleImageChange} required />
             </div>
 
             <CardFooter className="flex justify-end space-x-2 p-0">

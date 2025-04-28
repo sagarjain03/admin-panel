@@ -11,6 +11,7 @@ import axios from "axios"
 export default function StudentDetail({ params }: { params: { id: string } }) {
   const [student, setStudent] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     async function fetchStudent() {
@@ -57,14 +58,34 @@ export default function StudentDetail({ params }: { params: { id: string } }) {
       </Link>
 
       <div className="flex flex-col items-center mb-8">
-        <div className="h-48 w-48 rounded-full overflow-hidden border-4 border-blue-200 mb-4">
+        <div className="h-48 w-48 rounded-full overflow-hidden flex justify-center items-center border-4 border-blue-200 mb-4">
           <Image
-            src={student.profileImage || "/placeholder.svg"}
+            src={student.studentPhoto || "/placeholder.svg"}
             alt={student.name}
             width={192}
             height={192}
-            className="object-cover"
+            className="object-cover cursor-pointer"
+            onClick={() => setOpen(true)}
           />
+
+           {/* Full Screen Modal */}
+      {open && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 cursor-pointer"
+          onClick={() => setOpen(false)}
+        >
+          <div className="relative">
+            <img
+              src={student.studentPhoto || "/placeholder.svg"}
+              alt="Full Profile" 
+              className="max-w-full max-h-full"
+            />
+            <p className="absolute bottom-20 left-1/2 -translate-x-1/2 text-white text-2xl bg-black bg-opacity-50 px-4 py-2 rounded">
+              Click anywhere to close
+            </p>
+          </div>
+        </div>
+      )}
         </div>
         <h1 className="text-3xl font-bold text-blue-800">{student.name}</h1>
         <p className="text-xl text-blue-600 mt-1">{student.enrollmentNumber}</p>

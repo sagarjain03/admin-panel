@@ -59,7 +59,7 @@ export default function EditStudent() {
       contactNumber: formData.get("contactNumber")?.toString() ?? "",
       category: formData.get("category")?.toString() ?? "",
       description: formData.get("description")?.toString() ?? "",
-      studentPhoto: formData.get("profileImage")?.toString() ?? "",
+      // studentPhoto: formData.get("profileImage")?.toString() ?? "",
       socialMedia: {
         linkedin: formData.get("linkedin")?.toString() ?? "",
         twitter: formData.get("twitter")?.toString() ?? "",
@@ -235,7 +235,7 @@ export default function EditStudent() {
               />
             </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="profileImage" className="text-blue-700">
                 Profile Image URL
               </Label>
@@ -249,7 +249,9 @@ export default function EditStudent() {
               <p className="text-xs text-blue-500">
                 Note: In a production app, this would be a file upload component
               </p>
-            </div>
+            </div> */}
+
+            {/* profile image uploaded once cant be changed later  */}
 
             <CardFooter className="flex justify-end space-x-2">
               <Link href="/">
