@@ -1,14 +1,21 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IPost } from "@/lib/types";
 
+interface IPost extends Document {
+  name: string;
+  enrollmentNo: string;
+  department: string;
+  batch: string;
+  contactNumber?: string;
+  category: string;
+  talentMedia?: string;
+  socialMediaLinks?: string;
+  description: string;
+  studentPhoto: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-
-const postSchema: Schema<IPost> = new mongoose.Schema({
-  postTitle: {
-    type: String,
-    required: [true, 'Post title is required']
-  },
-
+const postSchema: Schema = new mongoose.Schema({
      name: { 
          type: String, 
          required: [true, 'Name is required'] 
@@ -34,29 +41,16 @@ const postSchema: Schema<IPost> = new mongoose.Schema({
          type: String,
          // enum: ['Singing', 'Dancing', 'Painting', 'Gaming', 'Standup', 'Others'],
          required: [true, 'Category is required']
-        },
-
-
+ 
+ 
+       },
        talentMedia: { 
-         type: [String] //images or videos 
+         type: String //images or videos 
        },
-       githubLink: { 
+       socialMediaLinks: {
          type: String,
-         
+        
        },
-       linkedinLink: { 
-         type: String,
-         
-       },
-       instagramLink: { 
-         type: String,
-         
-       },
-       youtubeLink: { 
-         type: String,
-         
-       },
-       
        description: { 
          type: String, 
          required: [true, 'Description is required'] 

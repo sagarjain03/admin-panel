@@ -74,17 +74,16 @@ export default function StudentDetail({ params }: { params: { id: string } }) {
           className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 cursor-pointer"
           onClick={() => setOpen(false)}
         >
-          <div className="relative w-96 h-96">
+          <div className="relative">
             <img
               src={student.studentPhoto || "/placeholder.svg"}
               alt="Full Profile" 
-              className="w-full h-full object-cover"
+              className="max-w-full max-h-full"
             />
-            
-          </div>
-          <p className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white text-2xl bg-black bg-opacity-50 px-4 py-2 rounded">
+            <p className="absolute bottom-20 left-1/2 -translate-x-1/2 text-white text-2xl bg-black bg-opacity-50 px-4 py-2 rounded">
               Click anywhere to close
             </p>
+          </div>
         </div>
       )}
         </div>
