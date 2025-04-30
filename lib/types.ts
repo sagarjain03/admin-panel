@@ -18,3 +18,4 @@ export interface IPost extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+//comment to push ignore it guys : aaj raat pakistan pe hamla hoga 
