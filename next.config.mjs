@@ -9,6 +9,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-}
+  experimental: {
+    serverActions: {},
+  },
+};
 
-export default nextConfig
+export default nextConfig;
