@@ -1,43 +1,50 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { ArrowLeft, Github, Linkedin, Twitter } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import axios from "axios"
+import { useEffect, useState, use } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import axios from "axios";
 
-export default function StudentDetail({ params }: { params: { id: string } }) {
-  const [student, setStudent] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+export default function StudentDetail({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
+  const [student, setStudent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     async function fetchStudent() {
       try {
-        const response = await axios.get(`http://localhost:3000/api/posts/${params.id}`)
+        const response = await axios.get(
+          `http://localhost:3000/api/posts/${id}`
+        );
         if (response.data.success) {
-          setStudent(response.data.data)
+          setStudent(response.data.data);
         } else {
-          setStudent(null)
+          setStudent(null);
         }
       } catch (error) {
-        console.error("Error fetching student", error)
-        setStudent(null)
+        console.error("Error fetching student", error);
+        setStudent(null);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-    fetchStudent()
-  }, [params.id])
+    fetchStudent();
+  }, [id]);
 
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-screen">
         <p className="text-blue-700">Loading...</p>
       </div>
-    )
+    );
   }
 
   if (!student) {
@@ -45,7 +52,7 @@ export default function StudentDetail({ params }: { params: { id: string } }) {
       <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-screen">
         <p className="text-blue-700">Student not found</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -68,99 +75,108 @@ export default function StudentDetail({ params }: { params: { id: string } }) {
             onClick={() => setOpen(true)}
           />
 
-           {/* Full Screen Modal */}
-      {open && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 cursor-pointer"
-          onClick={() => setOpen(false)}
-        >
-          <div className="relative w-96 h-96">
-            <img
-              src={student.studentPhoto || "/placeholder.svg"}
-              alt="Full Profile" 
-              className="w-full h-full object-cover"
-            />
-            
-          </div>
-          <p className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white text-2xl bg-black bg-opacity-50 px-4 py-2 rounded">
-              Click anywhere to close
-            </p>
-        </div>
-      )}
+          {/* Full Screen Modal */}
+          {open && (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 cursor-pointer"
+              onClick={() => setOpen(false)}
+            >
+              <div className="relative w-96 h-96">
+                <img
+                  src={student.studentPhoto || "/placeholder.svg"}
+                  alt="Full Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          )}
         </div>
         <h1 className="text-3xl font-bold text-blue-800">{student.name}</h1>
-        <p className="text-xl text-blue-600 mt-1">{student.enrollmentNumber}</p>
+        <p className="text-xl text-blue-600 mt-1">{student.enrollmentNo}</p>
       </div>
 
       <Card className="border-blue-100 shadow-sm">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h2 className="text-xl font-semibold text-blue-700 mb-4">Student Information</h2>
+              <h2 className="text-xl font-semibold text-blue-700 mb-4">
+                Student Information
+              </h2>
               <div className="space-y-3">
                 <div>
                   <p className="text-sm text-blue-500">Department</p>
-                  <p className="text-lg text-blue-800">{student.department}</p>
+                  <p className=" text-blue-800">{student.department}</p>
                 </div>
                 <div>
                   <p className="text-sm text-blue-500">Batch</p>
-                  <p className="text-lg text-blue-800">{student.batch}</p>
+                  <p className=" text-blue-800">{student.batch}</p>
                 </div>
                 <div>
                   <p className="text-sm text-blue-500">Category</p>
-                  <p className="text-lg text-blue-800">{student.category}</p>
+                  <p className=" text-blue-800">{student.category}</p>
                 </div>
                 <div>
                   <p className="text-sm text-blue-500">Contact Number</p>
-                  <p className="text-lg text-blue-800">{student.contactNumber}</p>
+                  <p className=" text-blue-800">{student.contactNumber}</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold text-blue-700 mb-4">Description</h2>
-              <p className="text-blue-800 leading-relaxed">{student.description}</p>
-
-              <h2 className="text-xl font-semibold text-blue-700 mt-6 mb-4">Social Media</h2>
-              <div className="flex space-x-4">
-                {student.socialMedia?.linkedin && (
-                  <a
-                    href={student.socialMedia.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-blue-600 hover:text-blue-800"
-                  >
-                    <Linkedin className="mr-2 h-5 w-5" />
-                    LinkedIn
-                  </a>
+              <h2 className="text-xl font-semibold text-blue-700 mb-4">
+                Social Media Links
+              </h2>
+              <div className="space-y-3">
+                {student.githubLink && (
+                  <div>
+                    <p className="text-sm text-blue-500">Github</p>
+                    <p className="text-blue-800">{student.githubLink}</p>
+                  </div>
                 )}
-                {student.socialMedia?.twitter && (
-                  <a
-                    href={student.socialMedia.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-blue-600 hover:text-blue-800"
-                  >
-                    <Twitter className="mr-2 h-5 w-5" />
-                    Twitter
-                  </a>
+                {student.linkedinLink && (
+                  <div>
+                    <p className="text-sm text-blue-500">LinkedIn</p>
+                    <p className="text-blue-800">{student.linkedinLink}</p>
+                  </div>
                 )}
-                {student.socialMedia?.github && (
-                  <a
-                    href={student.socialMedia.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-blue-600 hover:text-blue-800"
-                  >
-                    <Github className="mr-2 h-5 w-5" />
-                    GitHub
-                  </a>
+                {student.instagramLink && (
+                  <div>
+                    <p className="text-sm text-blue-500">Instagram</p>
+                    <p className="text-blue-800">{student.instagramLink}</p>
+                  </div>
+                )}
+                {student.youtubeLink && (
+                  <div>
+                    <p className="text-sm text-blue-500">Youtube</p>
+                    <p className="text-blue-800">{student.youtubeLink}</p>
+                  </div>
+                )}
+                {student.facebookLink && (
+                  <div>
+                    <p className="text-sm text-blue-500">Facebook</p>
+                    <p className="text-blue-800">{student.facebookLink}</p>
+                  </div>
                 )}
               </div>
+            </div>
+            <hr className="md:col-span-2 border-t border-blue-100" />
+            <div className="md:col-span-2">
+              <h2 className="text-xl font-semibold text-blue-700 mb-1">
+                Title
+              </h2>
+              <p className="text-blue-800 leading-relaxed">
+                {student.postTitle}
+              </p>
+              <h2 className="text-xl font-semibold text-blue-700 mb-1 mt-6">
+                Description
+              </h2>
+              <p className="text-blue-800 leading-relaxed">
+                {student.description}
+              </p>
             </div>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

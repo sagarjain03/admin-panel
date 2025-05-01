@@ -1,64 +1,80 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import axios from "axios"
-import { PlusCircle, Github, Linkedin, Twitter } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import axios from "axios";
+import { PlusCircle, Github, Linkedin, Twitter } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 export default function Dashboard() {
-  const [students, setStudents] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [students, setStudents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchStudents()
-  }, [])
+    fetchStudents();
+  }, []);
+
+  useEffect(() => {
+    console.log(students);
+  }, [students]);
 
   async function fetchStudents() {
     try {
-      const response = await axios.get("http://localhost:3000/api/posts")
+      const response = await axios.get("http://localhost:3000/api/posts");
       if (response.data.success) {
-        setStudents(response.data.data)
+        setStudents(response.data.data);
       } else {
-        setStudents([])
+        setStudents([]);
       }
     } catch (error) {
-      console.error("Error fetching posts", error)
-      setStudents([])
+      console.error("Error fetching posts", error);
+      setStudents([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
-  async function handleDelete(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) {
-    e.stopPropagation()
-    const confirmed = window.confirm("Are you sure you want to delete this student?")
+  async function handleDelete(
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    id: string
+  ) {
+    e.stopPropagation();
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this student?"
+    );
     if (confirmed) {
       try {
-        const response = await axios.delete(`http://localhost:3000/api/posts/${id}`)
+        const response = await axios.delete(
+          `http://localhost:3000/api/posts/${id}`
+        );
         if (response.data.success) {
           // Option 1: refetch students
-          await fetchStudents()
+          await fetchStudents();
           // Option 2: Update state without refetching
           // setStudents(prev => prev.filter(student => student._id !== id))
         } else {
-          alert(response.data.message || "Failed to delete student.")
+          alert(response.data.message || "Failed to delete student.");
         }
       } catch (error: any) {
-        console.error("Error deleting student:", error)
-        alert(error.response?.data?.message || "An error occurred. Please try again.")
+        console.error("Error deleting student:", error);
+        alert(
+          error.response?.data?.message ||
+            "An error occurred. Please try again."
+        );
       }
     }
   }
 
-  if (loading) return <div>Loading...</div>
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold text-blue-700">Student Dashboard</h1>
+        <h1 className="text-2xl font-semibold text-blue-700">
+          Student Dashboard
+        </h1>
         <Link href="/create">
           <Button className="bg-blue-600 hover:bg-blue-700 text-white">
             <PlusCircle className="mr-2 h-4 w-4" />
@@ -81,7 +97,7 @@ export default function Dashboard() {
                   <div className="flex items-center space-x-4">
                     <div className="h-16 w-16 rounded-full flex justify-center items-center overflow-hidden border-2 border-blue-200">
                       <Image
-                        src={student.studentPhoto|| "/placeholder.svg"}
+                        src={student.studentPhoto || "/placeholder.svg"}
                         alt={student.name}
                         width={100}
                         height={100}
@@ -89,48 +105,25 @@ export default function Dashboard() {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-medium text-blue-800 truncate">{student.name}</h3>
-                      <p className="text-sm text-blue-600">{student.enrollmentNumber}</p>
-                      <p className="text-sm text-blue-500">{student.department}</p>
-                      <p className="text-sm text-blue-400">Batch: {student.batch}</p>
-                      <p className="text-sm text-blue-400">{student.contactNumber}</p>
+                      <h3 className="text-lg font-medium text-blue-800 truncate">
+                        {student.name}
+                      </h3>
+                      <p className="text-sm text-blue-600">
+                        {student.enrollmentNumber}
+                      </p>
+                      <p className="text-sm text-blue-500">
+                        {student.department}
+                      </p>
+                      <p className="text-sm text-blue-400">
+                        Batch: {student.batch}
+                      </p>
+                      <p className="text-sm text-blue-400">
+                        {student.enrollmentNo}
+                      </p>
+                      <p className="text-sm text-blue-400">
+                        {student.category}
+                      </p>
                     </div>
-                  </div>
-
-                  <div className="mt-4 flex space-x-2">
-                    {student.socialMedia?.linkedin && (
-                      <a
-                        href={student.socialMedia.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:text-blue-700"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Linkedin size={18} />
-                      </a>
-                    )}
-                    {student.socialMedia?.twitter && (
-                      <a
-                        href={student.socialMedia.twitter}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:text-blue-700"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Twitter size={18} />
-                      </a>
-                    )}
-                    {student.socialMedia?.github && (
-                      <a
-                        href={student.socialMedia.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:text-blue-700"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Github size={18} />
-                      </a>
-                    )}
                   </div>
                 </CardContent>
               </Link>
@@ -157,5 +150,5 @@ export default function Dashboard() {
         </div>
       )}
     </div>
-  )
+  );
 }

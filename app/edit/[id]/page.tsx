@@ -1,56 +1,67 @@
-"use client"
+"use client";
 
-import { useState, useEffect, FormEvent } from "react"
-import Link from "next/link"
-import { useRouter, useParams } from "next/navigation"
-import { ArrowLeft } from "lucide-react"
-import axios from "axios"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState, useEffect, FormEvent } from "react";
+import Link from "next/link";
+import { useRouter, useParams } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+import axios from "axios";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-const departments = [
-  "Computer Science",
-  "Electrical Engineering",
-  "Mechanical Engineering",
-  "Civil Engineering",
-  "Data Science",
-  "Business Administration",
-]
+const departments = ["Information Technology"];
 
 export default function EditStudent() {
-  const { id } = useParams()
-  const router = useRouter()
-  const [student, setStudent] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [department, setDepartment] = useState("")
+  const { id } = useParams();
+  const router = useRouter();
+  const [student, setStudent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [department, setDepartment] = useState("");
+
+  // useEffect(() => {
+  //   console.log(student);
+  // }, [student]);
 
   useEffect(() => {
     async function fetchStudent() {
       try {
-        const response = await axios.get(`http://localhost:3000/api/posts/${id}`)
+        const response = await axios.get(
+          `http://localhost:3000/api/posts/${id}`
+        );
         if (response.data.success) {
-          setStudent(response.data.data)
-          setDepartment(response.data.data.department)
+          setStudent(response.data.data);
+          setDepartment(response.data.data.department);
         } else {
-          setStudent(null)
+          setStudent(null);
         }
       } catch (error) {
-        console.error("Error fetching student", error)
-        setStudent(null)
+        console.error("Error fetching student", error);
+        setStudent(null);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-    fetchStudent()
-  }, [id])
+    fetchStudent();
+  }, [id]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
     const data = {
       name: formData.get("name")?.toString() ?? "",
       enrollmentNo: formData.get("enrollmentNumber")?.toString() ?? "",
@@ -58,25 +69,31 @@ export default function EditStudent() {
       batch: formData.get("batch")?.toString() ?? "",
       contactNumber: formData.get("contactNumber")?.toString() ?? "",
       category: formData.get("category")?.toString() ?? "",
+      postTitle: formData.get("postTitle")?.toString() ?? "",
       description: formData.get("description")?.toString() ?? "",
+      githubLink: formData.get("github")?.toString() ?? "",
+      linkedinLink: formData.get("linkedin")?.toString() ?? "",
+      instagramLink: formData.get("instagram")?.toString() ?? "",
+      youtubeLink: formData.get("youtube")?.toString() ?? "",
+      facebookLink: formData.get("facebook")?.toString() ?? "",
       // studentPhoto: formData.get("profileImage")?.toString() ?? "",
-      socialMedia: {
-        linkedin: formData.get("linkedin")?.toString() ?? "",
-        twitter: formData.get("twitter")?.toString() ?? "",
-        github: formData.get("github")?.toString() ?? "",
-      },
-    }
+    };
 
     try {
-      const response = await axios.patch(`http://localhost:3000/api/posts/${id}`, data)
+      const response = await axios.patch(
+        `http://localhost:3000/api/posts/${id}`,
+        data
+      );
       if (response.data.success) {
-        router.push(`/students/${id}`)
+        router.push(`/students/${id}`);
       } else {
-        alert(response.data.message || "Failed to update student.")
+        alert(response.data.message || "Failed to update student.");
       }
     } catch (error: any) {
-      console.error("Error updating student:", error)
-      alert(error.response?.data?.message || "An error occurred. Please try again.")
+      console.error("Error updating student:", error);
+      alert(
+        error.response?.data?.message || "An error occurred. Please try again."
+      );
     }
   }
 
@@ -85,7 +102,7 @@ export default function EditStudent() {
       <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-screen">
         <p className="text-blue-700">Loading...</p>
       </div>
-    )
+    );
   }
 
   if (!student) {
@@ -93,7 +110,7 @@ export default function EditStudent() {
       <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-screen">
         <p className="text-blue-700">Student not found</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -113,7 +130,9 @@ export default function EditStudent() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-blue-700">Name</Label>
+                <Label htmlFor="name" className="text-blue-700">
+                  Name
+                </Label>
                 <Input
                   id="name"
                   name="name"
@@ -129,14 +148,19 @@ export default function EditStudent() {
                 <Input
                   id="enrollmentNumber"
                   name="enrollmentNumber"
-                  defaultValue={student.enrollmentNumber}
+                  defaultValue={student.enrollmentNo}
                   className="border-blue-200 focus:border-blue-400"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="department" className="text-blue-700">Department</Label>
-                <Select defaultValue={student.department} onValueChange={(value) => setDepartment(value)}>
+                <Label htmlFor="department" className="text-blue-700">
+                  Department
+                </Label>
+                <Select
+                  defaultValue={student.department}
+                  onValueChange={(value) => setDepartment(value)}
+                >
                   <SelectTrigger className="border-blue-200 focus:border-blue-400">
                     <SelectValue placeholder="Select department" />
                   </SelectTrigger>
@@ -174,7 +198,9 @@ export default function EditStudent() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="category" className="text-blue-700">Category</Label>
+                <Label htmlFor="category" className="text-blue-700">
+                  Category
+                </Label>
                 <Input
                   id="category"
                   name="category"
@@ -184,45 +210,83 @@ export default function EditStudent() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-blue-700">Social Media Links</Label>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-3">
+              <Label className="text-blue-700">Social Media Links: </Label>
+              <div className="space-y-1">
                 <div>
-                  <Label htmlFor="linkedin" className="text-sm text-blue-600">
-                    LinkedIn
-                  </Label>
-                  <Input
-                    id="linkedin"
-                    name="linkedin"
-                    defaultValue={student.socialMedia?.linkedin}
-                    className="border-blue-200 focus:border-blue-400"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="twitter" className="text-sm text-blue-600">
-                    Twitter
-                  </Label>
-                  <Input
-                    id="twitter"
-                    name="twitter"
-                    defaultValue={student.socialMedia?.twitter}
-                    className="border-blue-200 focus:border-blue-400"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="github" className="text-sm text-blue-600">
+                  <Label htmlFor="github" className="text-xs text-blue-600">
                     GitHub
                   </Label>
                   <Input
                     id="github"
                     name="github"
-                    defaultValue={student.socialMedia?.github}
                     className="border-blue-200 focus:border-blue-400"
+                    autoComplete="off"
+                    defaultValue={student.githubLink}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="linkedin" className="text-xs text-blue-600">
+                    LinkedIn
+                  </Label>
+                  <Input
+                    id="linkedin"
+                    name="linkedin"
+                    className="border-blue-200 focus:border-blue-400"
+                    autoComplete="off"
+                    defaultValue={student.linkedinLink}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="instagram" className="text-xs text-blue-600">
+                    Instagram
+                  </Label>
+                  <Input
+                    id="instagram"
+                    name="instagram"
+                    className="border-blue-200 focus:border-blue-400"
+                    autoComplete="off"
+                    defaultValue={student.instagramLink}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="youtube" className="text-xs text-blue-600">
+                    Youtube
+                  </Label>
+                  <Input
+                    id="youtube"
+                    name="youtube"
+                    className="border-blue-200 focus:border-blue-400"
+                    autoComplete="off"
+                    defaultValue={student.youtubeLink}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="facebook" className="text-xs text-blue-600">
+                    Facebook
+                  </Label>
+                  <Input
+                    id="facebook"
+                    name="facebook"
+                    className="border-blue-200 focus:border-blue-400"
+                    autoComplete="off"
+                    defaultValue={student.facebookLink}
                   />
                 </div>
               </div>
             </div>
-
+            <div className="space-y-2">
+              <Label htmlFor="postTitle" className="text-blue-700">
+                Title
+              </Label>
+              <Input
+                id="postTitle"
+                name="postTitle"
+                defaultValue={student.postTitle}
+                className="border-blue-200 focus:border-blue-400"
+                required
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="description" className="text-blue-700">
                 Description
@@ -255,11 +319,17 @@ export default function EditStudent() {
 
             <CardFooter className="flex justify-end space-x-2">
               <Link href="/">
-                <Button variant="outline" className="text-blue-600 border-blue-300 hover:bg-blue-100">
+                <Button
+                  variant="outline"
+                  className="text-blue-600 border-blue-300 hover:bg-blue-100"
+                >
                   Cancel
                 </Button>
               </Link>
-              <Button type="submit" className="bg-blue-700 hover:bg-blue-800 text-white">
+              <Button
+                type="submit"
+                className="bg-blue-700 hover:bg-blue-800 text-white"
+              >
                 Update
               </Button>
             </CardFooter>
@@ -267,5 +337,5 @@ export default function EditStudent() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
