@@ -13,6 +13,7 @@ export interface IPost extends Document {
   linkedinLink?: string;
   instagramLink?: string;
   youtubeLink?: string;
+  facebookLink?: string;
   description: string;
   studentPhoto: string;
   createdAt: Date;

@@ -56,6 +56,10 @@ const postSchema: Schema<IPost> = new mongoose.Schema({
          type: String,
          
        },
+       facebookLink: { 
+         type: String,
+         
+       },
        
        description: { 
          type: String, 
