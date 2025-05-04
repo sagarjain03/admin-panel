@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
-import { PlusCircle, Github, Linkedin, Twitter } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
@@ -16,9 +16,9 @@ export default function Dashboard() {
     fetchStudents();
   }, []);
 
-  useEffect(() => {
-    console.log(students);
-  }, [students]);
+  // useEffect(() => {
+  //   console.log(students);
+  // }, [students]);
 
   async function fetchStudents() {
     try {
@@ -98,9 +98,7 @@ export default function Dashboard() {
                     <div className="h-16 w-16 rounded-full flex justify-center items-center overflow-hidden border-2 border-blue-200">
                       <Image
                         src={
-                          student.studentPhoto ||
-                          student.studentphoto ||
-                          "/placeholder.svg"
+                          student.studentPhoto.secure_url || "/placeholder.svg"
                         }
                         alt={student.name}
                         width={100}

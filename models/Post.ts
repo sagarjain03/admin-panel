@@ -52,11 +52,20 @@ const postSchema: Schema<IPost> = new mongoose.Schema(
       required: [true, "Description is required"],
     },
     studentPhoto: {
-      type: String,
-      required: [true, "Student photo is required"],
+      type: {
+        public_id: { type: String, required: true },
+        secure_url: { type: String, required: true },
+      },
+      required: [true, "Student photo is required"], // Entire object is required
     },
     talentMedia: {
-      type: [String], //images or videos
+      type: [
+        {
+          public_id: { type: String, required: true },
+          secure_url: { type: String, required: true },
+        },
+      ],
+      required: [true, "Talent media is required"], // Entire array is required
     },
   },
   {

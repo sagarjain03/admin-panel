@@ -67,7 +67,7 @@ export default function StudentDetail({
       <div className="flex flex-col items-center mb-8">
         <div className="h-48 w-48 rounded-full overflow-hidden flex justify-center items-center border-4 border-blue-200 mb-4">
           <Image
-            src={student.studentPhoto || "/placeholder.svg"}
+            src={student.studentPhoto.secure_url || "/placeholder.svg"}
             alt={student.name}
             width={192}
             height={192}
@@ -83,7 +83,7 @@ export default function StudentDetail({
             >
               <div className="relative w-96 h-96">
                 <img
-                  src={student.studentPhoto || "/placeholder.svg"}
+                  src={student.studentPhoto.secure_url || "/placeholder.svg"}
                   alt="Full Profile"
                   className="w-full h-full object-cover"
                 />
@@ -130,31 +130,41 @@ export default function StudentDetail({
                 {student.githubLink && (
                   <div>
                     <p className="text-sm text-blue-500">Github</p>
-                    <p className="text-blue-800">{student.githubLink}</p>
+                    <Link href={student.githubLink} target="_blank">
+                      <p className="text-blue-800">{student.githubLink}</p>
+                    </Link>
                   </div>
                 )}
                 {student.linkedinLink && (
                   <div>
                     <p className="text-sm text-blue-500">LinkedIn</p>
-                    <p className="text-blue-800">{student.linkedinLink}</p>
+                    <Link href={student.linkedinLink} target="_blank">
+                      <p className="text-blue-800">{student.linkedinLink}</p>
+                    </Link>
                   </div>
                 )}
                 {student.instagramLink && (
                   <div>
                     <p className="text-sm text-blue-500">Instagram</p>
-                    <p className="text-blue-800">{student.instagramLink}</p>
+                    <Link href={student.instagramLink} target="_blank">
+                      <p className="text-blue-800">{student.instagramLink}</p>
+                    </Link>
                   </div>
                 )}
                 {student.youtubeLink && (
                   <div>
                     <p className="text-sm text-blue-500">Youtube</p>
-                    <p className="text-blue-800">{student.youtubeLink}</p>
+                    <Link href={student.youtubeLink} target="_blank">
+                      <p className="text-blue-800">{student.youtubeLink}</p>
+                    </Link>
                   </div>
                 )}
                 {student.facebookLink && (
                   <div>
                     <p className="text-sm text-blue-500">Facebook</p>
-                    <p className="text-blue-800">{student.facebookLink}</p>
+                    <Link href={student.facebookLink} target="_blank">
+                      <p className="text-blue-800">{student.facebookLink}</p>
+                    </Link>
                   </div>
                 )}
               </div>
@@ -174,34 +184,39 @@ export default function StudentDetail({
                 {student.description}
               </p>
               {student.talentMedia && student.talentMedia.length > 0 && (
-                <div className="mt-10">
-                  <h2 className="text-2xl font-semibold text-blue-700 mb-4">
+                <div className="mt-6">
+                  <h2 className="text-xl font-semibold text-blue-700 mb-5">
                     Talent Media
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {student.talentMedia.map((url: string, index: number) => (
-                      <div
-                        key={index}
-                        className="border border-blue-100 rounded-lg overflow-hidden shadow"
-                      >
-                        {url.endsWith(".mp4") ? (
-                          <video
-                            controls
-                            className="w-full h-64 object-cover bg-black"
-                            preload="metadata"
-                          >
-                            <source src={url} type="video/mp4" />
-                            Your browser does not support the video tag.
-                          </video>
-                        ) : (
-                          <img
-                            src={`${url}?v=${index}`}
-                            alt={`talent-media-${index}`}
-                            className="w-full h-64 object-cover"
-                          />
-                        )}
-                      </div>
-                    ))}
+                    {student.talentMedia.map(
+                      (
+                        { secure_url }: { secure_url: string },
+                        index: number
+                      ) => (
+                        <div
+                          key={index}
+                          className="border border-blue-100 rounded-lg overflow-hidden shadow"
+                        >
+                          {secure_url.endsWith(".mp4") ? (
+                            <video
+                              controls
+                              className="w-full h-64 object-cover bg-black"
+                              preload="metadata"
+                            >
+                              <source src={secure_url} type="video/mp4" />
+                              Your browser does not support the video tag.
+                            </video>
+                          ) : (
+                            <img
+                              src={`${secure_url}?v=${index}`}
+                              alt={`talent-media-${index}`}
+                              className="w-full h-64 object-cover"
+                            />
+                          )}
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               )}

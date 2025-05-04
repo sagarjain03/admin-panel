@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import Post from "@/models/Post";
 import { connectDB } from "@/lib/db";
-
+import cloudinary from "@/lib/cloudinary";
 // GET /api/posts/[id]
 export async function GET(
   request: Request,
@@ -79,6 +79,65 @@ export async function PATCH(
 }
 
 // DELETE /api/posts/[id]
+// export async function DELETE(
+//   request: Request,
+//   { params }: { params: { id: string } }
+// ) {
+//   try {
+//     const { id } = params;
+
+//     await connectDB();
+
+//     const deletedPost = await Post.findByIdAndDelete(id);
+
+//     if (!deletedPost) {
+//       return NextResponse.json(
+//         { success: false, message: "Post not found" },
+//         { status: 404 }
+//       );
+//     }
+
+//     return NextResponse.json(
+//       { success: true, message: "Post deleted successfully" },
+//       { status: 200 }
+//     );
+//   } catch (error) {
+//     console.error("Error deleting post:", error);
+//     return NextResponse.json(
+//       { success: false, message: "Failed to delete post" },
+//       { status: 500 }
+//     );
+//   }
+// }
+
+const getResourceType = (url: string): string => {
+  if (
+    url.endsWith(".mp4") ||
+    url.endsWith(".webm") ||
+    url.endsWith(".avi") ||
+    url.endsWith(".mov") ||
+    url.endsWith(".mkv") ||
+    url.endsWith(".flv")
+  ) {
+    return "video";
+  }
+
+  if (
+    url.endsWith(".jpg") ||
+    url.endsWith(".png") ||
+    url.endsWith(".heif") ||
+    url.endsWith(".heic") ||
+    url.endsWith(".webp") ||
+    url.endsWith(".svg") ||
+    url.endsWith(".gif") ||
+    url.endsWith(".avif")
+  ) {
+    return "image";
+  }
+
+  return "raw"; // Default to 'raw' if it's not an image or video
+};
+
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
@@ -88,23 +147,44 @@ export async function DELETE(
 
     await connectDB();
 
-    const deletedPost = await Post.findByIdAndDelete(id);
-
-    if (!deletedPost) {
+    // Find the post to retrieve the public_ids for media
+    const post = await Post.findById(id);
+    if (!post) {
       return NextResponse.json(
         { success: false, message: "Post not found" },
         { status: 404 }
       );
     }
 
+    // Delete the post from the database
+    await Post.findByIdAndDelete(id);
+
+    // Delete the student photo from Cloudinary (if it exists)
+    if (post.studentPhoto?.public_id) {
+      await cloudinary.uploader.destroy(post.studentPhoto.public_id, {
+        resource_type: getResourceType(post.studentPhoto.secure_url),
+      });
+    }
+
+    // Delete talent media from Cloudinary (if it exists)
+    for (const media of post.talentMedia || []) {
+      if (media.public_id) {
+        const resourceType = getResourceType(media.secure_url); // Corrected here to use media.secure_url
+
+        await cloudinary.uploader.destroy(media.public_id, {
+          resource_type: resourceType,
+        });
+      }
+    }
+
     return NextResponse.json(
-      { success: true, message: "Post deleted successfully" },
+      { success: true, message: "Post and media deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting post:", error);
+    console.error("Error deleting post and media:", error);
     return NextResponse.json(
-      { success: false, message: "Failed to delete post" },
+      { success: false, message: "Failed to delete post and media" },
       { status: 500 }
     );
   }

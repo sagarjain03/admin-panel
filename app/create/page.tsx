@@ -38,22 +38,43 @@ export default function CreateStudent() {
   const [department, setDepartment] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [medias, setMedias] = useState<File[]>([]); // Declare state to store files
-
+  const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) setImage(e.target.files[0]);
   };
+  // const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files) {
+  //     const files = Array.from(e.target.files);
+  //     setMedias((prev) => [...prev, ...files]); // Append to avoid overwrite if needed
+  //   }
+  // };
+
+  // This function removes duplicates if selected by user
   const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-      setMedias((prev) => [...prev, ...files]); // Append to avoid overwrite if needed
+
+      // Remove duplicates based on file name or other criteria
+      const newFiles = files.filter(
+        (file) =>
+          !medias.some((existingFile) => existingFile.name === file.name)
+      );
+
+      // Append only unique files
+      setMedias((prev) => [...prev, ...newFiles]);
     }
   };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log("Image in state:", image);
+    // console.log("Image in state:", image);
+    if (!department) {
+      alert("Please select a department");
+      return;
+    }
+    setSubmitting(true);
 
     if (!image) {
       alert("Please upload a profile image.");
@@ -141,6 +162,7 @@ export default function CreateStudent() {
         error.response?.data?.message || "An error occurred. Please try again."
       );
     }
+    setSubmitting(false);
   }
 
   return (
@@ -367,19 +389,27 @@ export default function CreateStudent() {
             }
 
             <CardFooter className="flex justify-end space-x-2 p-0">
-              <Link href="/">
+              <Link
+                href="/"
+                className={`${submitting && "pointer-events-none"}`}
+              >
                 <Button
                   variant="outline"
-                  className="text-blue-600 border-blue-300 hover:bg-blue-100"
+                  className={`text-red-600  border-red-600 hover:bg-red-600 hover:text-white ${
+                    submitting &&
+                    "pointer-events-none border-gray-500 text-gray-800"
+                  }`}
                 >
                   Cancel
                 </Button>
               </Link>
               <Button
                 type="submit"
-                className="bg-blue-700 hover:bg-blue-800 text-white"
+                className={`bg-blue-700 hover:bg-blue-800 text-white ${
+                  submitting && "pointer-events-none bg-gray-700"
+                }`}
               >
-                Create
+                {submitting ? "Creating..." : "Create"}
               </Button>
             </CardFooter>
           </form>

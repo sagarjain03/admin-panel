@@ -9,6 +9,7 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import type { LocalizationResource } from "@clerk/types";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,13 +19,23 @@ export const metadata: Metadata = {
   generator: "MAIT",
 };
 
+const localization: LocalizationResource = {
+  signIn: {
+    start: {
+      title: "Welcome, Admin",
+      subtitle: "Please log in with your credentials",
+      actionText: "Log In",
+    },
+  },
+};
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider localization={localization}>
       <html lang="en">
         <head>
           <link rel="icon" href="/favicon.ico" type="image/x-icon" />
