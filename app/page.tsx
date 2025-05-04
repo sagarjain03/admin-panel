@@ -97,7 +97,11 @@ export default function Dashboard() {
                   <div className="flex items-center space-x-4">
                     <div className="h-16 w-16 rounded-full flex justify-center items-center overflow-hidden border-2 border-blue-200">
                       <Image
-                        src={student.studentPhoto || "/placeholder.svg"}
+                        src={
+                          student.studentPhoto ||
+                          student.studentphoto ||
+                          "/placeholder.svg"
+                        }
                         alt={student.name}
                         width={100}
                         height={100}
@@ -118,7 +122,7 @@ export default function Dashboard() {
                         Batch: {student.batch}
                       </p>
                       <p className="text-sm text-blue-400">
-                        {student.enrollmentNo}
+                        {student.enrollmentNumber}
                       </p>
                       <p className="text-sm text-blue-400">
                         {student.category}

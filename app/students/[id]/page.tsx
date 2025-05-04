@@ -173,6 +173,38 @@ export default function StudentDetail({
               <p className="text-blue-800 leading-relaxed">
                 {student.description}
               </p>
+              {student.talentMedia && student.talentMedia.length > 0 && (
+                <div className="mt-10">
+                  <h2 className="text-2xl font-semibold text-blue-700 mb-4">
+                    Talent Media
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {student.talentMedia.map((url: string, index: number) => (
+                      <div
+                        key={index}
+                        className="border border-blue-100 rounded-lg overflow-hidden shadow"
+                      >
+                        {url.endsWith(".mp4") ? (
+                          <video
+                            controls
+                            className="w-full h-64 object-cover bg-black"
+                            preload="metadata"
+                          >
+                            <source src={url} type="video/mp4" />
+                            Your browser does not support the video tag.
+                          </video>
+                        ) : (
+                          <img
+                            src={`${url}?v=${index}`}
+                            alt={`talent-media-${index}`}
+                            className="w-full h-64 object-cover"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>

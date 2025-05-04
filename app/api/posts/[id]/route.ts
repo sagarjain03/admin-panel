@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import Post from "@/models/Post";
 import { connectDB } from "@/lib/db";
 
+// GET /api/posts/[id]
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
 
     await connectDB();
 
@@ -30,32 +31,28 @@ export async function GET(
   }
 }
 
+// PATCH /api/posts/[id]
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const body = await request.json();
 
     await connectDB();
 
-    // Find the post first
-    const existingPost = await Post.findById(id);
+    const updatedPost = await Post.findByIdAndUpdate(id, body, {
+      new: true,
+      runValidators: true,
+    });
 
-    if (!existingPost) {
+    if (!updatedPost) {
       return NextResponse.json(
         { success: false, message: "Post not found" },
         { status: 404 }
       );
     }
-
-    // Update the post
-    const updatedPost = await Post.findByIdAndUpdate(
-      id,
-      { $set: body },
-      { new: true, runValidators: true }
-    );
 
     return NextResponse.json(
       { success: true, data: updatedPost },
@@ -64,7 +61,6 @@ export async function PATCH(
   } catch (error: any) {
     console.error("Error updating post:", error);
 
-    // Handle duplicate enrollmentNo error
     if (error.code === 11000) {
       return NextResponse.json(
         {
@@ -82,6 +78,7 @@ export async function PATCH(
   }
 }
 
+// DELETE /api/posts/[id]
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }

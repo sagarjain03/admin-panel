@@ -45,6 +45,14 @@ export async function POST(request: Request) {
       }
     }
 
+    if (!Array.isArray(body.talentMedia) || body.talentMedia.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Talent media is required" },
+        { status: 400 }
+      );
+    }
+
+
     const post = await Post.create(body);
 
     return NextResponse.json({ success: true, data: post }, { status: 201 });

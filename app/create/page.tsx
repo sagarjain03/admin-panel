@@ -44,30 +44,32 @@ export default function CreateStudent() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) setImage(e.target.files[0]);
   };
-  // const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files) {
-  //     // Convert FileList to an array and store it in the media state object
-  //     const files = Array.from(e.target.files);
-  //     setMedia(files);
-  //   }
-  // };
+ const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+   if (e.target.files) {
+     const files = Array.from(e.target.files);
+     setMedia((prev) => [...prev, ...files]); // Append to avoid overwrite if needed
+   }
+ };
+
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+console.log("Image in state:", image);
 
     if (!image) {
       alert("Please upload a profile image.");
       return;
-    } else if (!media) {
+    } else if (media.length === 0) {
       alert("Please upload talent media.");
       return;
     }
+    
 
     try {
       const formData = new FormData();
       const form = e.currentTarget;
       formData.append("name", form.studentName.value);
-      formData.append("enrollmentNo", form.enrollmentNo.value);
+      formData.append("enrollmentNo", form.enrollmentNumber.value);
       formData.append("department", department);
       formData.append("batch", form.batch.value);
       formData.append("contactNumber", form.contactNumber.value);
@@ -76,26 +78,39 @@ export default function CreateStudent() {
       formData.append("linkedinLink", form.linkedin.value);
       formData.append("instagramLink", form.instagram.value);
       formData.append("youtubeLink", form.youtube.value);
-      formData.append("facebookLink ", form.facebook.value);
+      formData.append("facebookLink", form.facebook.value);
       formData.append("postTitle", form.postTitle.value);
       formData.append("description", form.postDescription.value);
       formData.append("studentPhoto", image);
       // WHEN CLOUDINARY IS SETUP
-      // media.forEach((file) => {
-      //   formData.append("media", file);
-      // });
+      media.forEach((file) => {
+        formData.append("media[]", file);
+      });
 
       try {
-        const uploadResponse = await axios.post("/api/upload", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const uploadResponse = await axios.post("/api/upload", formData);
 
-        const imageUrl = uploadResponse.data.url;
+        const { studentPhoto, media: mediaUrls } = uploadResponse.data;
 
-        const studentData = {
-          ...Object.fromEntries(formData),
-          studentPhoto: imageUrl,
-        };
+       const studentData = {
+         name: form.studentName.value,
+         enrollmentNo: form.enrollmentNumber.value, // ✅ correct mapping
+         department,
+         batch: form.batch.value,
+         contactNumber: form.contactNumber.value,
+         category: form.category.value,
+         githubLink: form.github.value,
+         linkedinLink: form.linkedin.value,
+         instagramLink: form.instagram.value,
+         youtubeLink: form.youtube.value,
+         facebookLink: form.facebook.value,
+         postTitle: form.postTitle.value,
+         description: form.postDescription.value,
+         studentPhoto, // ✅ from Cloudinary or similar
+         talentMedia: mediaUrls, // ✅ FIXED key name!
+       };
+
+
 
         try {
           const response = await axios.post(
@@ -161,7 +176,7 @@ export default function CreateStudent() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="enrollmentNo" className="text-blue-700">
+                <Label htmlFor="enrollmentNumber" className="text-blue-700">
                   Enrollment Number{" "}
                   <span className="text-red-600 text-xs">*</span>
                 </Label>
@@ -213,7 +228,7 @@ export default function CreateStudent() {
                   id="contactNumber"
                   name="contactNumber"
                   className="border-blue-200 focus:border-blue-400"
-                  // required
+                  required
                   autoComplete="off"
                 />
               </div>
@@ -226,6 +241,7 @@ export default function CreateStudent() {
                   id="category"
                   name="category"
                   className="border-blue-200 focus:border-blue-400"
+                  required
                   autoComplete="off"
                 />
               </div>
@@ -324,6 +340,7 @@ export default function CreateStudent() {
                 type="file"
                 id="image"
                 name="image"
+                accept="image/*"
                 onChange={handleImageChange}
                 required
                 autoComplete="off"
@@ -332,22 +349,22 @@ export default function CreateStudent() {
 
             {
               // WHEN CLOUDINARY IS SETUP
-              /* <div className="space-y-2">
-              <Label htmlFor="media" className="text-blue-700">
-                Student Talent Media{" "}
-                <span className="text-red-600 text-xs">*</span>
-              </Label>
-              <Input
-                type="file"
-                id="media"
-                name="media"
-                onChange={handleMediaChange}
-                multiple
-                // accept="image/*, video/*, application/pdf, application/msword, application/vnd.ms-excel"
-                required
-                autoComplete="off"
-              />
-            </div> */
+              <div className="space-y-2">
+                <Label htmlFor="media" className="text-blue-700">
+                  Student Talent Media{" "}
+                  <span className="text-red-600 text-xs">*</span>
+                </Label>
+                <Input
+                  type="file"
+                  id="media"
+                  name="media"
+                  onChange={handleMediaChange}
+                  multiple
+                  accept="image/*, video/*, application/pdf, application/msword, application/vnd.ms-excel"
+                  required
+                  autoComplete="off"
+                />
+              </div>
             }
 
             <CardFooter className="flex justify-end space-x-2 p-0">
