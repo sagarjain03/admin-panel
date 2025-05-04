@@ -37,33 +37,31 @@ const departments = ["Information Technology"]; //removed all the other depts an
 export default function CreateStudent() {
   const [department, setDepartment] = useState("");
   const [image, setImage] = useState<File | null>(null);
-  const [media, setMedia] = useState<File[]>([]); // Declare state to store files
+  const [medias, setMedias] = useState<File[]>([]); // Declare state to store files
 
   const router = useRouter();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) setImage(e.target.files[0]);
   };
- const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-   if (e.target.files) {
-     const files = Array.from(e.target.files);
-     setMedia((prev) => [...prev, ...files]); // Append to avoid overwrite if needed
-   }
- };
-
+  const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      setMedias((prev) => [...prev, ...files]); // Append to avoid overwrite if needed
+    }
+  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-console.log("Image in state:", image);
+    console.log("Image in state:", image);
 
     if (!image) {
       alert("Please upload a profile image.");
       return;
-    } else if (media.length === 0) {
+    } else if (medias.length === 0) {
       alert("Please upload talent media.");
       return;
     }
-    
 
     try {
       const formData = new FormData();
@@ -83,34 +81,35 @@ console.log("Image in state:", image);
       formData.append("description", form.postDescription.value);
       formData.append("studentPhoto", image);
       // WHEN CLOUDINARY IS SETUP
-      media.forEach((file) => {
-        formData.append("media[]", file);
+      medias.forEach((file) => {
+        formData.append("talentMedia", file);
       });
 
       try {
         const uploadResponse = await axios.post("/api/upload", formData);
 
-        const { studentPhoto, media: mediaUrls } = uploadResponse.data;
+        // const { studentPhoto, media: mediaUrls } = uploadResponse.data;
+        const res = uploadResponse.data;
+        const studentPic = res.studentPhoto;
+        const studentMedia = res.media;
 
-       const studentData = {
-         name: form.studentName.value,
-         enrollmentNo: form.enrollmentNumber.value, // ✅ correct mapping
-         department,
-         batch: form.batch.value,
-         contactNumber: form.contactNumber.value,
-         category: form.category.value,
-         githubLink: form.github.value,
-         linkedinLink: form.linkedin.value,
-         instagramLink: form.instagram.value,
-         youtubeLink: form.youtube.value,
-         facebookLink: form.facebook.value,
-         postTitle: form.postTitle.value,
-         description: form.postDescription.value,
-         studentPhoto, // ✅ from Cloudinary or similar
-         talentMedia: mediaUrls, // ✅ FIXED key name!
-       };
-
-
+        const studentData = {
+          name: form.studentName.value,
+          enrollmentNo: form.enrollmentNumber.value,
+          department,
+          batch: form.batch.value,
+          contactNumber: form.contactNumber.value,
+          category: form.category.value,
+          githubLink: form.github.value,
+          linkedinLink: form.linkedin.value,
+          instagramLink: form.instagram.value,
+          youtubeLink: form.youtube.value,
+          facebookLink: form.facebook.value,
+          postTitle: form.postTitle.value,
+          description: form.postDescription.value,
+          studentPhoto: studentPic,
+          talentMedia: studentMedia,
+        };
 
         try {
           const response = await axios.post(
