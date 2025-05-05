@@ -20,6 +20,32 @@
 //   updatedAt: Date;
 // }
 
+// export interface IPost extends Document {
+//   name: string;
+//   enrollmentNo: string;
+//   department: string;
+//   batch: string;
+//   contactNumber?: string;
+//   category: string;
+//   githubLink?: string;
+//   linkedinLink?: string;
+//   instagramLink?: string;
+//   youtubeLink?: string;
+//   facebookLink?: string;
+//   postTitle: string;
+//   description: string;
+//   studentPhoto: {
+//     public_id: string;
+//     secure_url: string;
+//   };
+//   talentMedia: {
+//     public_id: string;
+//     secure_url: string;
+//   }[];
+//   createdAt: Date;
+//   updatedAt: Date;
+// }
+
 export interface IPost extends Document {
   name: string;
   enrollmentNo: string;
@@ -42,6 +68,7 @@ export interface IPost extends Document {
     public_id: string;
     secure_url: string;
   }[];
+  likes: Number;
   createdAt: Date;
   updatedAt: Date;
 }

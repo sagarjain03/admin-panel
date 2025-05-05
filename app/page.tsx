@@ -46,9 +46,7 @@ export default function Dashboard() {
     );
     if (confirmed) {
       try {
-        const response = await axios.delete(
-          `http://localhost:3000/api/posts/${id}`
-        );
+        const response = await axios.delete(`/api/posts/${id}`);
         if (response.data.success) {
           // Option 1: refetch students
           await fetchStudents();
