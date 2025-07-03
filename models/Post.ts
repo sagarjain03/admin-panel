@@ -96,8 +96,8 @@ const postSchema: Schema<IPost> = new mongoose.Schema(
       required: [true, "Department is required"],
     },
     batch: {
-      type: String,
-      required: [true, "Batch is required"],
+       type: String,
+       required: [true, "Batch is required"],
     },
     contactNumber: {
       type: String,

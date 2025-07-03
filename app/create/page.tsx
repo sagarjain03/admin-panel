@@ -32,10 +32,11 @@ import {
 //   "Data Science",
 //   "Business Administration",
 // ];
-const departments = ["Information Technology"]; //removed all the other depts and keeping only IT
-
+const departments = ["Information Technology"];  //removed all the other depts and keeping only IT
+const batchs = ["2026","2027","2028","2029"]
 export default function CreateStudent() {
   const [department, setDepartment] = useState("");
+  const [batch, setBatch] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [medias, setMedias] = useState<File[]>([]); // Declare state to store files
   const [submitting, setSubmitting] = useState(false);
@@ -90,7 +91,7 @@ export default function CreateStudent() {
       formData.append("name", form.studentName.value);
       formData.append("enrollmentNo", form.enrollmentNumber.value);
       formData.append("department", department);
-      formData.append("batch", form.batch.value);
+      formData.append("batch", batch);
       formData.append("contactNumber", form.contactNumber.value);
       formData.append("category", form.category.value);
       formData.append("githubLink", form.github.value);
@@ -118,7 +119,7 @@ export default function CreateStudent() {
           name: form.studentName.value,
           enrollmentNo: form.enrollmentNumber.value,
           department,
-          batch: form.batch.value,
+          batch,
           contactNumber: form.contactNumber.value,
           category: form.category.value,
           githubLink: form.github.value,
@@ -232,13 +233,18 @@ export default function CreateStudent() {
                 <Label htmlFor="batch" className="text-blue-700">
                   Batch <span className="text-red-600 text-xs">*</span>
                 </Label>
-                <Input
-                  id="batch"
-                  name="batch"
-                  className="border-blue-200 focus:border-blue-400"
-                  required
-                  autoComplete="off"
-                />
+                <Select onValueChange={(value) => setBatch(value)}>
+                  <SelectTrigger className="border-blue-200 focus:border-blue-400">
+                    <SelectValue placeholder="Select Batch" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {batchs.map((batch) => (
+                      <SelectItem key={batch} value={batch}>
+                        {batch}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">

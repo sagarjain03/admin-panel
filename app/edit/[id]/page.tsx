@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 
 const departments = ["Information Technology"];
+const batchs = ["2026","2027","2028","2029"]
 
 export default function EditStudent() {
   const { id } = useParams();
@@ -32,6 +33,7 @@ export default function EditStudent() {
   const [student, setStudent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [department, setDepartment] = useState("");
+  const [batch, setBatch] = useState("");
 
   // useEffect(() => {
   //   console.log(student);
@@ -46,6 +48,7 @@ export default function EditStudent() {
         if (response.data.success) {
           setStudent(response.data.data);
           setDepartment(response.data.data.department);
+          setBatch(response.data.data.batch);
         } else {
           setStudent(null);
         }
@@ -66,7 +69,7 @@ export default function EditStudent() {
       name: formData.get("name")?.toString() ?? "",
       enrollmentNo: formData.get("enrollmentNumber")?.toString() ?? "",
       department: department,
-      batch: formData.get("batch")?.toString() ?? "",
+      batch: batch,
       contactNumber: formData.get("contactNumber")?.toString() ?? "",
       category: formData.get("category")?.toString() ?? "",
       postTitle: formData.get("postTitle")?.toString() ?? "",
@@ -177,13 +180,21 @@ export default function EditStudent() {
                 <Label htmlFor="batch" className="text-blue-700">
                   Batch
                 </Label>
-                <Input
-                  id="batch"
-                  name="batch"
+                 <Select
                   defaultValue={student.batch}
-                  className="border-blue-200 focus:border-blue-400"
-                  required
-                />
+                  onValueChange={(value) => setBatch(value)}
+                >
+                  <SelectTrigger className="border-blue-200 focus:border-blue-400">
+                    <SelectValue placeholder="Select department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {batchs.map((batch) => (
+                      <SelectItem key={batch} value={batch}>
+                        {batch}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="contactNumber" className="text-blue-700">
